@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LISTA DE TAREFAS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://marketplace.canva.com/EAF-MZFsLqw/1/0/1600w/canva-fundo-de-tela-de-computador-motivacional-simples-preto-e-ouro-4h1Zv5Jeojw.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 700px;
+            min-height: 500px;
+            margin: auto;
+            background: rgba(19, 87, 177, 0.8); /* Com transparência para melhor visibilidade */
+            padding: 20px;
+            border-radius: 20px;
+            border: 8px solid #524533;
+            box-shadow: 0 0 15px rgba(180, 8, 109, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: url('https://i.im.ge/2024/10/24/kYR5Lm.ent.png'); /* Adicione a URL da sua imagem aqui */
+            background-size: cover; /* Ajusta a imagem para cobrir todo o container */
+            background-position: center; /* Centraliza a imagem */
+        }
+
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #5f4a2d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #5f4a2d;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            width: 100%;
+        }
+
+        li {
+            padding: 10px;
+            background: #f9f9f9;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete {
+            background-color: red;
+            border: none;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+
+        h1 {
+            margin: 20px 0;
+            color: #524533;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lista de Tarefas</h1>
+        <input type="text" id="task-input" placeholder="Digite sua tarefa">
+        <button id="add-button">Adicionar Tarefa</button>
+        <ul id="task-list"></ul>
+    </div>
+    <script>
+        const addButton = document.getElementById('add-button');
+        const taskInput = document.getElementById('task-input');
+        const taskList = document.getElementById('task-list');
+
+        // Carregar tarefas do localStorage ao iniciar
+        loadTasks();
+
+        addButton.addEventListener('click', () => {
+            const taskName = taskInput.value.trim();
+            if (taskName) {
+                addTask(taskName);
+                taskInput.value = ''; // Limpa o campo de entrada
+            }
+        });
+
+        function addTask(task) {
+            const li = document.createElement('li');
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.onclick = () => {
+                li.classList.toggle('completed', checkbox.checked);
+                updateLocalStorage();
+            };
+
+            li.appendChild(checkbox);
+            li.appendChild(document.createTextNode(task));
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Remover';
+            deleteButton.classList.add('delete');
+            deleteButton.onclick = () => {
+                li.remove();
+                updateLocalStorage();
+            };
+
+            li.appendChild(deleteButton);
+            taskList.appendChild(li);
+            updateLocalStorage();
+        }
+
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.forEach(task => addTask(task.text, task.completed));
+        }
+
+        function updateLocalStorage() {
+            const tasks = [];
+            taskList.querySelectorAll('li').forEach(li => {
+                const taskText = li.childNodes[1].textContent; // Texto da tarefa
+                const isCompleted = li.querySelector('input[type="checkbox"]').checked; // Estado do checkbox
+                tasks.push({ text: taskText, completed: isCompleted });
+            });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+    </script>
+</body>
+</html>
